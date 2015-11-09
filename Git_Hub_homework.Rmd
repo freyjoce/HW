@@ -1,0 +1,43 @@
+---
+title: "Dreaded homework"
+author: "Jocelyn Hafer"
+date: "November 9, 2015"
+output: html_document
+---
+
+
+####Initialize packages from library.
+```{r, message=FALSE}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(RCurl)
+```
+
+####From movies dataset, pull movie title, imdb rating percentiles, genre
+#####Tidy data by rating frequency
+#####Tidy data by genre
+```{r}
+movie_select <- select(movies, title, r1:r10, Action:Short)
+
+movie_rating <- select(movie_select, title, r1:r10)
+movie2 <- movie_rating %>% gather(rating, frequency, r1:r10) %>% arrange(title)
+
+movie_genre <- select(movie_select, title, Action:Short)
+movie3 <- movie_genre %>% gather(genre, frequency, Action:Short) %>% arrange(title) %>% filter(frequency == 1)
+```
+
+####From cafe data:
+```{r}
+url <- getURL("https://raw.githubusercontent.com/shv38339/statcomp597d/master/cafedata.csv")
+dat2 <- read.csv(file = textConnection(url), header = TRUE)
+```
+
+#####I would tidy the data by collapsing the dates into just days of the week and looking at items sold and wasted by day of the week.
+
+#####Data could be untidied by un-arranging it from date order and lumping together the month/day/year with the day of the week.
+```{r}
+untidy <- dat2 %>% arrange(Bread.Sand.Sold, Bread.Sand.Waste, Wraps.Sold, Wraps.Waste, Muffins.Sold, Muffins.Waste)
+untidy$untidy2 <- paste(untidy$Date, untidy$Day.of.Week, sep = " ")
+```
